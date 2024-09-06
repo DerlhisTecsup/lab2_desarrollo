@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Pokémon</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f8f9fa;
+        color: #343a40;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      h1 {
+        color: #007bff;
+        margin-bottom: 30px;
+      }
+      .input-group {
+        max-width: 400px;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .pokemon-info {
+        margin-top: 20px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        color: #343a40;
+      }
+      .pokemon-info p {
+        margin: 5px 0;
+      }
+      button {
+        background-color: #007bff;
+        border: none;
+        color: white;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pokémon API</h1>
+    <div class="input-group">
+      <input
+        type="number"
+        class="form-control"
+        id="pokemonId"
+        placeholder="Enter Pokémon ID"
+      />
+      <div class="input-group-append">
+        <button class="btn btn-primary" onclick="fetchPokemon()">
+          Get Pokémon
+        </button>
+      </div>
+    </div>
+
+    <div id="pokemonInfo" class="pokemon-info"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Función para obtener los datos de un Pokémon
+      async function fetchPokemon() {
+        const pokemonId = document.getElementById("pokemonId").value;
+        const pokemonInfoDiv = document.getElementById("pokemonInfo");
+
+        if (!pokemonId) {
+          pokemonInfoDiv.innerHTML = `<p>Please enter a Pokémon ID.</p>`;
+          return;
+        }
+
+        try {
+          // Consumir la API desde el backend local
+          const response = await fetch(
+            `http://localhost:5000/pokemon/${pokemonId}`
+          );
+          const data = await response.json();
+
+          // Mostrar los datos del Pokémon si se encuentra
+          if (response.ok) {
+            pokemonInfoDiv.innerHTML = `
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Height:</strong> ${data.height}</p>
+                        <p><strong>Weight:</strong> ${data.weight}</p>
+                        <p><strong>Types:</strong> ${data.types.join(", ")}</p>
+                    `;
+          } else {
+            pokemonInfoDiv.innerHTML = `<p>${data.message}</p>`;
+          }
+        } catch (error) {
+          pokemonInfoDiv.innerHTML = `<p>Failed to fetch data. Please try again later.</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>
